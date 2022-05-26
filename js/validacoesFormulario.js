@@ -3,23 +3,23 @@ const buttonForm = document.querySelector('form.form-auth button');
 const inputsForm = document.querySelectorAll('form.form-auth input');
 
 inputsForm.forEach((input) => {
-    input.insertAdjacentHTML('afterend', '<span class="error" style="display:none">Esse campo é obrigatório</span>');
+    input.insertAdjacentHTML('afterend', '<span class="error" style="display:none">Campo incorreto</span>');
 })
 
-function ehInputValido(name, value) {
-    if (!value) {
-        return false;
+function ehInputValido(nome, valor) {
+    if (!valor) {
+        return { ehCampoValido: false, mensagem: 'Campo obrigatório' };
     }
 
-    switch (name) {
+    switch (nome) {
         case 'name':
-            return value.length > 20 && value.length < 80;
+            return valor.length > 20 && valor.length < 80 ? { ehCampoValido: true } : { ehCampoValido: false, mensagem: 'Deve ter entre 20 à 80 caracteres' };
 
         case 'surname':
-            return value.length > 2 && value.length < 100;
+            return valor.length > 2 && valor.length < 100 ? { ehCampoValido: true } : { ehCampoValido: false, mensagem: 'Deve ter entre 2 à 100 caracteres' };
 
         default:
-            return true;
+            return { ehCampoValido: true };
     }
 }
 
@@ -30,11 +30,12 @@ form.onsubmit = (event) => {
     let ehFormularioInvalido = false;
 
     inputs.forEach(input => {
-        ehFormularioInvalido = ehInputValido(input.name, input.value);
+        const resposta = ehInputValido(input.name, input.value);
 
-        if (!ehFormularioInvalido) {
+        if (!resposta.ehCampoValido) {
             ehFormularioInvalido = true;
             input.nextElementSibling.style.display = 'block';
+            input.nextElementSibling.innerHTML = resposta.mensagem;
         } else {
             input.nextElementSibling.style.display = 'none';
         }
